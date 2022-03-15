@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 SOURCE="./TestFiles"
 TARGET="./TestArea"
@@ -10,5 +10,5 @@ echo "Copying testfiles"
 cp -p $SOURCE/* $TARGET
 
 echo "Running Program"
-./picrenamer.sh $TARGET/*
+./picrenamer $TARGET/*
 
