@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Program version
-VERSION="v0.2"
+VERSION="v0.3"
 
 # Define colors
 COLOR_BLACK="\033[0;30m"
@@ -107,7 +107,6 @@ for OLDFILE in "$@"; do
       if [ "$OLDFILE" != "$NEWFILE" ]; then
         echo -e "Renaming $COLOR_WHITE'"$(basename "$OLDFILE")"'$COLOR_NONE to $COLOR_WHITE'"$(basename "$NEWFILE")"'$COLOR_NONE"
         mv -n "$OLDFILE" "$NEWFILE"  # -n -> do not overwrite an existing file
-        touch "$NEWFILE"             # Update timestamp
       else
         echo -e "$COLOR_WHITE'"$(basename "$OLDFILE")"'$COLOR_NONE has already the correct name!"
       fi
