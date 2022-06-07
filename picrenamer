@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 # Program version
-VERSION="v0.3"
+VERSION="v1.0"
 
 # Define colors
 COLOR_BLACK="\033[0;30m"
 COLOR_RED="\033[0;31m"
 COLOR_GREEN="\033[0;32m"
-COLOR_ORANGE="\033[0;33m" 
-COLOR_BLUE="\033[0;34m" 
-COLOR_PURPLE="\033[0;35m" 
-COLOR_CYAN="\033[0;36m" 
-COLOR_LIGHT_GRAY="\033[0;37m" 
+COLOR_ORANGE="\033[0;33m"
+COLOR_BLUE="\033[0;34m"
+COLOR_PURPLE="\033[0;35m"
+COLOR_CYAN="\033[0;36m"
+COLOR_LIGHT_GRAY="\033[0;37m"
 COLOR_DARK_GRAY="\033[1;30m"
 COLOR_LIGHT_RED="\033[1;31m"
 COLOR_LIGHT_GREEN="\033[1;32m"
@@ -37,7 +37,7 @@ if [ "$1" ]; then  # Parameter given?
     echo
     echo "Options"
     echo "--help     This help"
-    exit
+    exit 0
   fi
 fi
 
@@ -71,6 +71,14 @@ echo -e "$COLOR_RED""picRenamer $COLOR_LIGHT_RED$VERSION"
 echo -ne "$COLOR_NONE"
 echo
 
+###########
+# Prepare #
+###########
+
+# Start time
+echo -e "Starting $COLOR_LIGHT_PURPLE$(date '+%Y-%m-%d %H:%M:%S')$COLOR_NONE"
+START=$(date '+%s')
+
 ################
 # Rename Files #
 ################
@@ -98,7 +106,7 @@ for OLDFILE in "$@"; do
       break
     fi
   done
-  
+
   # Handle file renaming
   FILENUM=$((FILENUM+1))
   echo -ne "$COLOR_YELLOW[$FILENUM/$FILECOUNT]$COLOR_NONE "
@@ -118,5 +126,10 @@ for OLDFILE in "$@"; do
   fi
 done
 
-# We're done...
-echo "done..."
+################
+# Finishing up #
+################
+
+echo -e "Finished $COLOR_LIGHT_PURPLE$(date '+%Y-%m-%d %H:%M:%S')$COLOR_NONE"
+END=$(date '+%s')
+echo -e "Prog took $COLOR_LIGHT_PURPLE$(( $END - $START )) seconds$COLOR_NONE"
