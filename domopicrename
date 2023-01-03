@@ -18,7 +18,7 @@ color_yellow="\033[0;33m"
 color_blue="\033[0;34m"
 color_purple="\033[0;35m"
 color_cyan="\033[0;36m"
-color_mark="\033[0;37m"
+color_white="\033[0;37m"
 color_bold_black="\033[1;30m"
 color_bold_red="\033[1;31m"
 color_bold_green="\033[1;32m"
@@ -42,7 +42,7 @@ color_error=$color_bold_red
 # Function to end script with exit code and wait for ENTER to close window (if not started from shell)
 function ScriptExit()
 {
-  if [ "$script_started_in_x" = "1" ] || [ "$MC_SID" ]; then # Started in gnome-terminal or Midnight Commander?
+  if [ "$SCRIPT_STARTED_IN_X" = "1" ] || [ ! -z ${MC_SID+x} ]; then # Started in gnome-terminal or Midnight Commander?
     if [ "$1" -ne "0" ]; then
       echo -e "Exitcode $color_mark$1$color_off"
     fi
@@ -63,15 +63,17 @@ function ScriptExit()
 ###############################
 
 if [ -t 0 ] && [ -t 1 ] && [ -t 2 ]; then # STDIN, STDOUT and STDERR defined?
-  if [ "$MC_SID" ]; then # Started in Midnight Commander?
+  if [ ! -z ${MC_SID+x} ]; then # Started in Midnight Commander?
     clear
   fi
   echo -en "$color_off""Running $color_mark$script_name$color_off version $color_mark$script_version$color_off"
-  if [ "$script_started_in_x" = 1 ]; then
+  if [ "$SCRIPT_STARTED_IN_X" = 1 ]; then
     echo -en " in $color_mark""X$color_off"
   else
+    SCRIPT_STARTED_IN_X=0
+    set -u # From her on warn about empty variables
     echo -en " in $color_mark""Terminal$color_off"
-    if [ "$MC_SID" ]; then # Started in Midnight Commander?
+    if [ ! -z ${MC_SID+x} ]; then # Started in Midnight Commander?
       echo -en " started from $color_mark""mc$color_off"
     fi
   fi
@@ -89,7 +91,7 @@ if [ -t 0 ] && [ -t 1 ] && [ -t 2 ]; then # STDIN, STDOUT and STDERR defined?
   fi
 else
   # No Terminal found, starting gnome-terminal
-  gnome-terminal --title $script_name" "$script_version -- /usr/bin/env "script_started_in_x=1" "$0" "$@"
+  gnome-terminal --title $script_name" "$script_version -- /usr/bin/env "SCRIPT_STARTED_IN_X=1" "$0" "$@"
   exit
 fi
 
