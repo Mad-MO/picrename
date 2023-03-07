@@ -2,7 +2,7 @@
 
 # Script info
 script_name="domoPicRename"
-script_version="1.1"
+script_version="1.2"
 script_tools="echo date figlet tput clear test mv exiftool awk tr"
 
 ########################
@@ -155,44 +155,51 @@ echo
 filecount=$#
 filenum=0
 for oldfile in "$@"; do
-  # Get name parts of old file
-  filename="${oldfile##*/}"
-  directory="${oldfile:0:${#oldfile} - ${#filename}}"
-  basename="${oldfile%.[^.]*}"
-  extension=$(echo "${oldfile:${#basename} + 1}" | tr [:upper:] [:lower:])
 
-  # Get EXIF info and build new name
-  exifdate=$(exiftool -CreateDate -d "%Y-%m-%d %H.%M.%S" "$oldfile" 2>/dev/null | awk '{print $4 " " $5}')
-  newfile="$directory$exifdate.$extension"
-
-  # Add number for same filenames
-  num=1
-  while [ -e "$newfile" ]; do
-    if [ "$oldfile" != "$newfile" ]; then
-        num=$((num+1))
-        newfile="$directory$exifdate ($num).$extension"
-    else
-      break
-    fi
-  done
-
-  # Handle file renaming
   filenum=$((filenum+1))
   echo -ne "$color_section[$filenum/$filecount]$color_off "
-  if [ "$exifdate" != "" ]; then
-    if [ "$exifdate" != "0000:00:00 00:00:00" ]; then
+
+  if [ ! -d "$oldfile" ]; then
+    # Get name parts of old file
+    filename="${oldfile##*/}"
+    directory="${oldfile:0:${#oldfile} - ${#filename}}"
+    basename="${oldfile%.[^.]*}"
+    extension=$(echo "${oldfile:${#basename} + 1}" | tr [:upper:] [:lower:])
+
+    # Get EXIF info and build new name
+    exifdate=$(exiftool -CreateDate -d "%Y-%m-%d %H.%M.%S" "$oldfile" 2>/dev/null | awk '{print $4 " " $5}')
+    newfile="$directory$exifdate.$extension"
+
+    # Add number for same filenames
+    num=1
+    while [ -e "$newfile" ]; do
       if [ "$oldfile" != "$newfile" ]; then
-        echo -e "Renaming $color_mark'"$(basename "$oldfile")"'$color_off to $color_mark'"$(basename "$newfile")"'$color_off"
-        mv -n "$oldfile" "$newfile"  # -n -> do not overwrite an existing file
+        num=$((num+1))
+        newfile="$directory$exifdate ($num).$extension"
       else
-        echo -e "$color_mark'"$(basename "$oldfile")"'$color_off has already the correct name!"
+        break
+      fi
+    done
+
+    # Handle file renaming
+    if [ "$exifdate" != "" ]; then
+      if [ "$exifdate" != "0000:00:00 00:00:00" ]; then
+        if [ "$oldfile" != "$newfile" ]; then
+          echo -e "Renaming $color_mark'"$(basename "$oldfile")"'$color_off to $color_mark'"$(basename "$newfile")"'$color_off"
+          mv -n "$oldfile" "$newfile"  # -n -> do not overwrite an existing file
+        else
+          echo -e "$color_mark'"$(basename "$oldfile")"'$color_off has already the correct name!"
+        fi
+      else
+        echo -e "$color_mark'"$(basename "$oldfile")"'$color_error has a bad EXIF Date!$color_off"
       fi
     else
-      echo -e "$color_mark'"$(basename "$oldfile")"'$color_error has a bad EXIF Date!$color_off"
+      echo -e "$color_mark'"$(basename "$oldfile")"'$color_error has no EXIF Date!$color_off"
     fi
   else
-    echo -e "$color_mark'"$(basename "$oldfile")"'$color_error has no EXIF Date!$color_off"
+    echo -e "$color_mark'"$(basename "$oldfile")"'$color_error is a directory!$color_off"
   fi
+
 done
 
 #########################
