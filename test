@@ -4,10 +4,10 @@ SOURCE="./TestFiles"
 TARGET="./TestArea"
 
 echo "Cleaning up"
-rm $TARGET/*
+rm -r $TARGET/*
 
 echo "Copying testfiles"
-cp -p $SOURCE/* $TARGET
+cp -rp $SOURCE/* $TARGET
 
 echo "Running Program"
 ./domopicrename $TARGET/*
