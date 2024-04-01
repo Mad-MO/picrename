@@ -136,7 +136,7 @@ done
 ############################
 
 echo -ne "$color_header"
-figlet $script_name -w $(tput cols)
+figlet -w $(tput cols) $script_name
 echo -e "$color_header$script_name $script_version$color_off"
 echo
 
