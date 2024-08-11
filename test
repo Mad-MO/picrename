@@ -10,5 +10,5 @@ echo "Copying testfiles"
 cp -rp $SOURCE/* $TARGET
 
 echo "Running Program"
-./domopicrename $TARGET/*
+./picrename $TARGET/*
 

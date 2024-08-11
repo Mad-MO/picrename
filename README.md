@@ -1,7 +1,7 @@
 
 # Description
 
-picRename - Rename images accourding to exif date
+picrename - Rename images accourding to exif date
 
 # Usage
 
