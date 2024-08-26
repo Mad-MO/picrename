@@ -1,15 +1,24 @@
 #!/usr/bin/env bash
 
+# File:    picrename
+# Author:  Martin Ochs
+# License: MIT
+# Brief:   Rename images accourding to exif date
+
 # Script info
 script_name="picrename"
-script_version="1.2"
+script_version="1.3"
 script_tools="echo date figlet tput clear test mv exiftool awk tr"
 
-########################
-# Definition of colors #
-########################
 
-# General colors
+
+# Activate debug output (uncomment if needed)
+#set -x
+
+# From here on warn about unset variables
+set -u
+
+# Definition of colors
 color_off="\033[0m"
 color_black="\033[0;30m"
 color_red="\033[0;31m"
@@ -28,129 +37,81 @@ color_bold_purple="\033[1;35m"
 color_bold_cyan="\033[1;36m"
 color_bold_white="\033[1;37m"
 
-# Theme colors
-color_header=$color_bold_red
-color_time=$color_bold_purple
-color_section=$color_bold_yellow
-color_mark=$color_bold_white
-color_error=$color_bold_red
-
-########################
-# Define exit function #
-########################
-
-# Function to end script with exit code and wait for ENTER to close window (if not started from shell)
-function ScriptExit()
-{
-  if [ "$SCRIPT_STARTED_IN_X" = "1" ] || [ ! -z ${MC_SID+x} ]; then # Started in gnome-terminal or Midnight Commander?
-    if [ "$1" -ne "0" ]; then
-      echo -e "Exitcode $color_mark$1$color_off"
-    fi
-    echo
-    echo -e "Press $color_mark""ENTER$color_off to close window"
-    read
-  fi
-
-  if [ "$1" ]; then
-    exit $1
-  else
-    exit
-  fi
-}
-
-###############################
-# Handle Terminal Environment #
-###############################
-
-if [ -t 0 ] && [ -t 1 ] && [ -t 2 ]; then # STDIN, STDOUT and STDERR defined?
-  if [ ! -z ${MC_SID+x} ]; then # Started in Midnight Commander?
-    clear
-  fi
-  echo -en "$color_off""Running $color_mark$script_name$color_off version $color_mark$script_version$color_off"
-  if [ "$SCRIPT_STARTED_IN_X" = 1 ]; then
-    echo -en " in $color_mark""X$color_off"
-  else
-    SCRIPT_STARTED_IN_X=0
-    set -u # From her on warn about empty variables
-    echo -en " in $color_mark""Terminal$color_off"
-    if [ ! -z ${MC_SID+x} ]; then # Started in Midnight Commander?
-      echo -en " started from $color_mark""mc$color_off"
-    fi
-  fi
-  echo -en " as user $color_mark$(id -un)$color_off"
-  if   [ $# -eq 1 ]; then
-    echo -e " with parameter $color_mark$@$color_off"
-  elif [ $# -gt 1 ]; then
-    echo -en " with $color_mark$#$color_off parameters$color_mark"
-    for x in "$@"; do
-      echo -en " \"$x\""
-    done
-    echo -e "$color_off"
-  else
-    echo -e " with $color_mark""no$color_off parameters"
-  fi
+# Definition of used theme colors
+if test -t 1; then
+  color_header=$color_bold_red
+  color_time=$color_bold_cyan
+  color_section=$color_bold_yellow
+  color_mark=$color_bold_green
+  color_error=$color_bold_red
 else
-  # No Terminal found, starting gnome-terminal
-  gnome-terminal --title $script_name" "$script_version -- /usr/bin/env "SCRIPT_STARTED_IN_X=1" "$0" "$@"
-  exit
+  color_off=
+  color_header=
+  color_time=
+  color_section=
+  color_mark=
+  color_error=
 fi
 
-####################
-# Check Parameters #
-####################
+# Show Terminal Environment and script startup info
+echo -en "$color_off""Running $color_mark$script_name$color_off version $color_mark$script_version$color_off as user $color_mark$(id -un)$color_off"
+if   [ $# -eq 1 ]; then
+  echo -e " with parameter $color_mark$@$color_off"
+elif [ $# -gt 1 ]; then
+  echo -en " with $color_mark$#$color_off parameters"
+  for x in "$@"; do
+    echo -en " $color_mark$x$color_off"
+  done
+else
+  echo -e " with $color_mark""no""$color_off parameters"
+fi
+echo
 
-if [ $# -gt 0 ]; then # Parameter given?
-  if [ "$1" = "--help" ] || [ "$1" = "-h" ]; then
+# Check Parameters
+for x in $*; do        # Method 1: Check all parameters in a loop without changing them
+  if [ "$x" = "-h" ] || [ "$x" = "--help" ]; then
     echo "Usage: picrename [OPTIONS] FILES"
     echo
     echo "picrename will take the EXIF date from the pictures and rename the file accordingly."
     echo
     echo "Options"
     echo "-h, --help      This help"
-    echo "-d, --debug     print all executed commands"
     echo
     echo "Exit status:"
     echo " 0  if OK"
     echo " 1  if ERROR"
-    ScriptExit 0
-  elif [ "$1" = "--debug" ] || [ "$1" = "-d" ]; then
-    set -x
-    shift
+    exit 0
   fi
-fi
+done
 
-##########################
-# Check for needed tools #
-##########################
+# Show script startup info
+echo -ne "$color_header"
+echo "       _                                          "
+echo " _ __ (_) ___ _ __ ___ _ __   __ _ _ __ ___   ___ "
+echo "| '_ \| |/ __| '__/ _ \ '_ \ / _\` | '_ \` _ \ / _ \\"
+echo "| |_) | | (__| | |  __/ | | | (_| | | | | | |  __/"
+echo "| .__/|_|\___|_|  \___|_| |_|\__,_|_| |_| |_|\___|"
+echo "|_|                                               "
+echo -e "$color_header$script_name $script_version$color_off"
+echo
 
+# Check for needed tools
 for x in $script_tools; do # Run through tool list
   which $x > /dev/null
   if [ $? -ne 0 ]; then
     echo -e "Tool $color_mark$x$color_off is missing!"
-    ScriptExit 1
+    exit 1
   fi
 done
 
-############################
-# Show script startup info #
-############################
-
-echo -ne "$color_header"
-figlet -w $(tput cols) $script_name
-echo -e "$color_header$script_name $script_version$color_off"
-echo
-
-##########################
-# Start time measurement #
-##########################
-
+# Start time measurement
 echo -e "Starting $color_time$(date '+%Y-%m-%d %H:%M:%S')$color_off"
 script_start=$(date '+%s')
 echo
 
-##########
-# Script #
-##########
+##############################################
+# Script Start - Implement your script below #
+###############################################################################
 
 filecount=$#
 filenum=0
@@ -202,10 +163,11 @@ for oldfile in "$@"; do
 
 done
 
-#########################
-# Stop time measurement #
-#########################
+###############################################################################
+# Script End - Implement your script above #
+############################################
 
+# Stop time measurement
 echo
 echo -e "Finished $color_time$(date '+%Y-%m-%d %H:%M:%S')$color_off"
 script_end="$(date '+%s')"
@@ -213,8 +175,5 @@ script_duration="$(( $script_end - $script_start ))"
 echo -e "Duration $color_time$script_duration sec$color_off"
 echo
 
-###############
-# Exit script #
-###############
-
-ScriptExit 0
+# Exit script
+exit 0
