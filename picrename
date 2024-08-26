@@ -8,7 +8,7 @@
 # Script info
 script_name="picrename"
 script_version="1.3"
-script_tools="echo date figlet tput clear test mv exiftool awk tr"
+script_tools="echo date mv exiftool awk tr basename"
 
 
 
