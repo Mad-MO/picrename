@@ -4,6 +4,4 @@
 *.log
 *.temp
 *.tmp
-
-TestArea/*
-TestFiles/*
+testdir

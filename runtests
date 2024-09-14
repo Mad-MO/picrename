@@ -1,21 +1,42 @@
 #!/usr/bin/env bash
 
+TESTDIR="$(pwd)/testdir"
 
+# Preparing test environment
+echo "Preparing test environment"
 
-# TODO: Make testfiles suitable for public use
-# TODO: Add testfiles to git
+# Delete old testdir
+echo "Delete old testdir"
+rm -rf "testdir"
 
+# Add directory for testing
+mkdir -p $TESTDIR
 
+# File with already correct name
+cp pic.jpg $TESTDIR/"2022-12-24 20.15.00.jpg"
+exiftool -overwrite_original -AllDates='2022:12:24 20:15:00' $TESTDIR/"2022-12-24 20.15.00.jpg"
 
-SOURCE="./TestFiles"
-TARGET="./TestArea"
+# Corrupt file
+touch $TESTDIR/corrupt.jpg
 
-echo "Cleaning up"
-rm -r $TARGET/*
+# Directory
+mkdir -p $TESTDIR/emptydir
 
-echo "Copying testfiles"
-cp -rp $SOURCE/* $TARGET
+# Files with the same date
+cp pic.jpg $TESTDIR/pic1.jpg
+exiftool -overwrite_original -AllDates='2020:12:24 20:15:00' $TESTDIR/pic1.jpg
+cp pic.jpg $TESTDIR/pic2.jpg
+exiftool -overwrite_original -AllDates='2020:12:24 20:15:00' $TESTDIR/pic2.jpg
+cp pic.jpg $TESTDIR/pic3.jpg
+exiftool -overwrite_original -AllDates='2020:12:24 20:15:00' $TESTDIR/pic3.jpg
 
-echo "Running Program"
-./picrename $TARGET/*
+# Files with different dates
+cp pic.jpg $TESTDIR/pic4.jpg
+exiftool -overwrite_original -AllDates='2021:12:24 20:15:00' $TESTDIR/pic4.jpg
+cp pic.jpg $TESTDIR/pic5.jpg
+exiftool -overwrite_original -AllDates='2021:12:24 20:15:01' $TESTDIR/pic5.jpg
 
+# Run Tool
+echo
+echo "Run tool"
+#./picrename $TESTDIR/*
