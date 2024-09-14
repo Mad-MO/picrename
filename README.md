@@ -3,23 +3,29 @@
 
 ## Description
 
-Rename pictures accourding to their EXIF date.
+This script renames pictures to their EXIF date.
 
 ## Screenshot
 
-TODO
+![Screenshot](./Screenshot.png)
 
 ## Usage
 
-TODO
+```Bash
+#> ./picrename file1 file2 ...
+```
 
 ## Background
 
-TODO
+The commandlinetool "exiftool" is used to get the creation date and time of the given picture. Then the picture is renamed with this date and time as filename. If the exact date and time is already used, a number will be attached to the filename.
 
 ## Development
 
-TODO
+The script "runtests" generates the directory "testdir" with some testfiles and runs the script on this directory.
+
+```Bash
+#> ./runtests
+```
 
 ## License
 
