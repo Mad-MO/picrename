@@ -39,4 +39,4 @@ exiftool -overwrite_original -AllDates='2021:12:24 20:15:01' $TESTDIR/pic5.jpg
 # Run Tool
 echo
 echo "Run tool"
-#./picrename $TESTDIR/*
+./picrename $TESTDIR/*
