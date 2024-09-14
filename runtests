@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+
+
+# TODO: Make testfiles suitable for public use
+# TODO: Add testfiles to git
+
+
+
 SOURCE="./TestFiles"
 TARGET="./TestArea"
 
