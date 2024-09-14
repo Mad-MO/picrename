@@ -1,17 +1,30 @@
 
-# Description
+# picrename (Rename pictures to EXIF date)
 
-picrename - Rename images accourding to exif date
+## Description
 
-# Usage
+Rename pictures accourding to their EXIF date.
 
-Todo...
+## Screenshot
 
-# Todos
+TODO
 
-- Make testfiles suitable for public use
-- Add testfiles to git
+## Usage
 
-# Author
+TODO
 
-by domo
+## Background
+
+TODO
+
+## Development
+
+TODO
+
+## License
+
+MIT License, see "License.txt".
+
+## Author
+
+By domo
