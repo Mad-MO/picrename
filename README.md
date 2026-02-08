@@ -1,5 +1,7 @@
 
-# picrename (Rename pictures to EXIF date)
+# picrename
+
+Rename pictures to EXIF date
 
 ## Description
 
